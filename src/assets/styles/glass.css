@@ -1,0 +1,295 @@
+/* Efectos de Glassmorphism leve */
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card {
+  background: rgba(22, 26, 37, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+/* Botones Glass */
+.glass-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.glass-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.glass-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.glass-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Variantes de Botones */
+.btn-primary {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(139, 92, 246, 0.8));
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.95), rgba(139, 92, 246, 0.95));
+  box-shadow: 0 6px 22px rgba(99, 102, 241, 0.5);
+}
+
+.btn-accent-red {
+  background: linear-gradient(135deg, rgba(155, 22, 57, 0.85), rgba(190, 24, 93, 0.75));
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(155, 22, 57, 0.35);
+}
+
+.btn-accent-red:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(155, 22, 57, 1), rgba(190, 24, 93, 0.9));
+  box-shadow: 0 6px 22px rgba(155, 22, 57, 0.5);
+}
+
+.btn-accent-blue {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(99, 102, 241, 0.8));
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+}
+
+.btn-accent-blue:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(99, 102, 241, 0.95));
+  box-shadow: 0 6px 22px rgba(59, 130, 246, 0.5);
+}
+
+/* Control de Rotación Flechas */
+.cube-arrow-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #c7d2fe;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.cube-arrow-btn:hover {
+  background: rgba(99, 102, 241, 0.45);
+  border-color: rgba(99, 102, 241, 0.7);
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.cube-arrow-btn:active {
+  transform: scale(0.94);
+}
+
+/* Selectores Glass */
+.glass-select {
+  appearance: none;
+  background: rgba(22, 26, 37, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  padding: 8px 30px 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.glass-select:focus {
+  outline: none;
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.glass-select option {
+  background: #181b24;
+  color: #f3f4f6;
+  padding: 6px;
+}
+
+/* Cuadrado de color individual de cara */
+.color-tile {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.color-tile.small {
+  width: 32px;
+  height: 32px;
+  font-size: 0.9rem;
+}
+
+.color-tile.mini {
+  width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+}
+
+/* Estilos de colores específicos */
+.tile-R {
+  background-color: var(--color-rojo);
+  color: #ffffff;
+}
+
+.tile-B {
+  background-color: var(--color-blanco);
+  color: #111827;
+}
+
+.tile-V {
+  background-color: var(--color-verde);
+  color: #ffffff;
+}
+
+.tile-A {
+  background-color: var(--color-amarillo);
+  color: #111827;
+}
+
+/* Insignia '¡RESUELTO!' */
+.badge-solved {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(16, 175, 107, 0.25), rgba(16, 175, 107, 0.4));
+  border: 1px solid rgba(16, 175, 107, 0.6);
+  color: #34d399;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(16, 175, 107, 0.35);
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(16, 175, 107, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(16, 175, 107, 0.6);
+  }
+}
+
+/* Botón RESOLVER con animación constante y llamativa mientras no esté resuelto */
+.btn-solve-pulsing {
+  position: relative;
+  background: linear-gradient(135deg, #9b1639 0%, #e11d48 50%, #be123c 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 0 20px rgba(225, 29, 72, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3) !important;
+  animation: solvePulse 2s ease-in-out infinite, solveShimmer 3s infinite linear;
+  overflow: hidden;
+}
+
+.btn-solve-pulsing::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  animation: sweepLight 2.5s infinite;
+}
+
+@keyframes solvePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 18px rgba(225, 29, 72, 0.55), 0 0 35px rgba(155, 22, 57, 0.3);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 28px rgba(225, 29, 72, 0.85), 0 0 50px rgba(155, 22, 57, 0.5);
+  }
+}
+
+@keyframes sweepLight {
+  0% {
+    left: -70%;
+  }
+  40%, 100% {
+    left: 140%;
+  }
+}
+
+/* Animaciones de intercambio físico de cubos en la torre */
+.swapping-up {
+  transform: translateY(-56px) scale(0.96) !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  z-index: 10;
+}
+
+.swapping-down {
+  transform: translateY(56px) scale(0.96) !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  z-index: 10;
+}
+
