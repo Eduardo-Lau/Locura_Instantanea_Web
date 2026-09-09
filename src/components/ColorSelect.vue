@@ -1,32 +1,55 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 import { ColorCode, ColorDef } from '../types/cube'
 import { COLOR_LIST } from '../core/constants'
 
-const props = defineProps<{
-  modelValue: ColorCode
-}>()
+const props = withDefaults(
+  defineProps<{
+    modelValue: ColorCode
+    placement?: 'bottom' | 'top'
+    isOpen?: boolean
+  }>(),
+  {
+    placement: 'bottom',
+    isOpen: undefined
+  }
+)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: ColorCode): void
+  (e: 'update:isOpen', value: boolean): void
 }>()
 
-const isOpen = ref(false)
+const internalIsOpen = ref(false)
 const rootRef = ref<HTMLElement | null>(null)
 
+const isDropdownOpen = computed(() => {
+  return props.isOpen !== undefined ? props.isOpen : internalIsOpen.value
+})
+
+function setOpen(val: boolean) {
+  if (props.isOpen !== undefined) {
+    emit('update:isOpen', val)
+  } else {
+    internalIsOpen.value = val
+  }
+}
+
 function toggle() {
-  isOpen.value = !isOpen.value
+  setOpen(!isDropdownOpen.value)
 }
 
 function selectColor(color: ColorDef) {
   emit('update:modelValue', color.code)
-  isOpen.value = false
+  setOpen(false)
 }
 
 function handleClickOutside(e: MouseEvent) {
   if (rootRef.value && !rootRef.value.contains(e.target as Node)) {
-    isOpen.value = false
+    if (isDropdownOpen.value) {
+      setOpen(false)
+    }
   }
 }
 
@@ -49,7 +72,7 @@ function getCurrentColor(): ColorDef {
     <button
       type="button"
       class="select-trigger glass-panel"
-      :class="{ 'is-open': isOpen }"
+      :class="{ 'is-open': isDropdownOpen }"
       @click.stop="toggle"
     >
       <span
@@ -57,12 +80,16 @@ function getCurrentColor(): ColorDef {
         :style="{ backgroundColor: getCurrentColor().hex }"
       ></span>
       <span class="color-text">{{ getCurrentColor().name }}</span>
-      <ChevronDown class="chevron-icon" :class="{ rotated: isOpen }" :size="15" />
+      <ChevronDown class="chevron-icon" :class="{ rotated: isDropdownOpen }" :size="15" />
     </button>
 
     <!-- Menú Desplegable flotante con Glassmorphism -->
-    <Transition name="dropdown-anim">
-      <div v-if="isOpen" class="dropdown-menu glass-panel">
+    <Transition :name="placement === 'top' ? 'dropdown-top-anim' : 'dropdown-anim'">
+      <div
+        v-if="isDropdownOpen"
+        class="dropdown-menu glass-panel"
+        :class="`placement-${placement}`"
+      >
         <button
           v-for="color in COLOR_LIST"
           :key="color.code"
@@ -156,6 +183,12 @@ function getCurrentColor(): ColorDef {
   gap: 2px;
 }
 
+.dropdown-menu.placement-top {
+  top: auto;
+  bottom: calc(100% + 5px);
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.6);
+}
+
 .dropdown-item {
   display: flex;
   align-items: center;
@@ -177,7 +210,7 @@ function getCurrentColor(): ColorDef {
   border: 1px solid rgba(99, 102, 241, 0.4);
 }
 
-/* Animación del dropdown */
+/* Animación del dropdown hacia abajo */
 .dropdown-anim-enter-active,
 .dropdown-anim-leave-active {
   transition: opacity 0.15s ease, transform 0.15s ease;
@@ -187,6 +220,18 @@ function getCurrentColor(): ColorDef {
 .dropdown-anim-leave-to {
   opacity: 0;
   transform: translateY(-4px) scale(0.97);
+}
+
+/* Animación del dropdown hacia arriba */
+.dropdown-top-anim-enter-active,
+.dropdown-top-anim-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.dropdown-top-anim-enter-from,
+.dropdown-top-anim-leave-to {
+  opacity: 0;
+  transform: translateY(4px) scale(0.97);
 }
 
 @media (max-width: 520px) {
@@ -216,6 +261,8 @@ function getCurrentColor(): ColorDef {
 
   .dropdown-menu {
     width: 105px;
+    right: 0;
+    left: auto;
     padding: 3px;
   }
 

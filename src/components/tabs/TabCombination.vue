@@ -51,14 +51,24 @@ function handlePlay() {
   emit('play')
 }
 
-const faceLabels: { key: keyof CubeFaces; label: string }[] = [
-  { key: 'c1', label: 'Cara 1' },
-  { key: 'c2', label: 'Cara 2' },
-  { key: 'c3', label: 'Cara 3' },
-  { key: 'c4', label: 'Cara 4' },
-  { key: 'c5', label: 'Cara 5' },
-  { key: 'c6', label: 'Cara 6' }
+const faceLabels: { key: keyof CubeFaces; label: string; placement: 'bottom' | 'top' }[] = [
+  { key: 'c1', label: 'Cara 1', placement: 'bottom' },
+  { key: 'c2', label: 'Cara 2', placement: 'bottom' },
+  { key: 'c3', label: 'Cara 3', placement: 'bottom' },
+  { key: 'c4', label: 'Cara 4', placement: 'top' },
+  { key: 'c5', label: 'Cara 5', placement: 'top' },
+  { key: 'c6', label: 'Cara 6', placement: 'top' }
 ]
+
+const openDropdownId = ref<string | null>(null)
+
+function handleDropdownToggle(id: string, isOpen: boolean) {
+  if (isOpen) {
+    openDropdownId.value = id
+  } else if (openDropdownId.value === id) {
+    openDropdownId.value = null
+  }
+}
 </script>
 
 <template>
@@ -85,6 +95,7 @@ const faceLabels: { key: keyof CubeFaces; label: string }[] = [
         v-for="(cube, cubeIdx) in localCubes"
         :key="cubeIdx"
         class="cube-config-column glass-panel"
+        :style="{ zIndex: openDropdownId?.startsWith(`c${cubeIdx}-`) ? 60 : (10 - cubeIdx) }"
       >
         <h3 class="cube-col-title" :style="{ color: `var(--cube-${cubeIdx + 1})` }">
           Cubo {{ cubeIdx + 1 }}
@@ -95,13 +106,17 @@ const faceLabels: { key: keyof CubeFaces; label: string }[] = [
             v-for="face in faceLabels"
             :key="face.key"
             class="face-select-row"
+            :style="{ zIndex: openDropdownId === `c${cubeIdx}-${face.key}` ? 30 : 1 }"
           >
             <span class="face-label">{{ face.label }}</span>
 
             <!-- Selector con círculo de color y texto blanco -->
             <ColorSelect
               :model-value="cube[face.key]"
+              :placement="face.placement"
+              :is-open="openDropdownId === `c${cubeIdx}-${face.key}`"
               @update:model-value="handleColorChange(cubeIdx, face.key, $event)"
+              @update:is-open="handleDropdownToggle(`c${cubeIdx}-${face.key}`, $event)"
             />
           </div>
         </div>
@@ -175,6 +190,7 @@ const faceLabels: { key: keyof CubeFaces; label: string }[] = [
   display: flex;
   flex-direction: column;
   gap: 14px;
+  position: relative;
 }
 
 .cube-col-title {
@@ -195,6 +211,7 @@ const faceLabels: { key: keyof CubeFaces; label: string }[] = [
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  position: relative;
 }
 
 .face-label {
