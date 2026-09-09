@@ -176,6 +176,10 @@ function handleDropdownToggle(id: string, isOpen: boolean) {
   justify-content: center;
 }
 
+.actions-bar .btn-accent-blue {
+  padding: 10px 14px;
+}
+
 .cubes-config-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -304,20 +308,20 @@ function handleDropdownToggle(id: string, isOpen: boolean) {
     justify-content: center;
   }
   .actions-bar .glass-btn {
-    padding: 8px 8px;
+    padding: 8px 10px;
     font-size: 0.78rem;
     letter-spacing: 0;
     gap: 5px;
     white-space: nowrap;
+    flex: 0 0 auto;
   }
   .actions-bar .btn-accent-red {
     flex-shrink: 0;
-    padding: 8px 12px;
+    padding: 8px 10px;
   }
   .actions-bar .btn-accent-blue {
-    flex: 1;
-    min-width: 0;
-    justify-content: center;
+    flex: 0 0 auto;
+    padding: 8px 7px;
   }
   .actions-bar .glass-btn svg {
     width: 15px;
