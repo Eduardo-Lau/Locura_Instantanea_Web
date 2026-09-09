@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { CubeFaces } from './types/cube'
 import { SavedGame } from './types/history'
 import { solveInstantInsanity } from './core/graphSolver'
@@ -20,9 +20,15 @@ import TabHistory from './components/tabs/TabHistory.vue'
 // Pestaña activa
 const activeTab = ref<ActiveTab>('game')
 
-// Estado reactivo de los 4 cubos
+// Estado reactivo desacoplado:
+// baseCubes: combinación inmutable que define el puzzle (GL y lista de soluciones)
+// towerCubes: orientación física actual en la torre del juego
 const savedState = loadCurrentGameState()
-const cubes = ref<CubeFaces[]>(savedState.cubes)
+const baseCubes = ref<CubeFaces[]>(savedState.baseCubes)
+const towerCubes = ref<CubeFaces[]>(savedState.towerCubes)
+
+// Flag para indicar si hubo modificaciones en la combinación sin haber pulsado JUGAR
+const hasPendingChanges = ref<boolean>(savedState.hasPendingChanges ?? false)
 
 // Solución actualmente seleccionada (1-indexed)
 const currentSolutionIndex = ref<number>(savedState.activeSolutionIndex || 1)
@@ -30,44 +36,68 @@ const currentSolutionIndex = ref<number>(savedState.activeSolutionIndex || 1)
 // Historial de partidas
 const history = ref<SavedGame[]>(getHistory())
 
-// Soluciones matemáticas calculadas reactivamente por Teoría de Grafos
+// Soluciones matemáticas calculadas reactivamente a partir de la COMBINACIÓN BASE
 const solutions = computed(() => {
-  return solveInstantInsanity(cubes.value)
+  return solveInstantInsanity(baseCubes.value)
 })
 
 const hasSolution = computed(() => solutions.value.length > 0)
 const solutionCount = computed(() => solutions.value.length)
 
-// Estado resuelto en tiempo real
-const isSolved = computed(() => isTowerSolved(cubes.value))
+// Estado resuelto en tiempo real de la torre
+const isSolved = computed(() => isTowerSolved(towerCubes.value))
 
-// Actualizar cubos y persistir
-function updateCubes(newCubes: CubeFaces[]) {
-  cubes.value = newCubes
-  // Ajustar índice de solución si cambió el número de soluciones
+// Validaciones de acceso requeridas por el usuario:
+// 1. A 'Juego' solo se accede si no hay cambios pendientes sin jugar en Combinación
+const canAccessGame = computed(() => !hasPendingChanges.value)
+
+// 2. A 'Explicación' solo se accede si el juego está resuelto Y no hay cambios pendientes
+const canAccessExplanation = computed(() => !hasPendingChanges.value && isSolved.value)
+
+function persistState() {
+  saveCurrentGameState({
+    baseCubes: baseCubes.value,
+    towerCubes: towerCubes.value,
+    activeSolutionIndex: currentSolutionIndex.value,
+    hasPendingChanges: hasPendingChanges.value
+  })
+}
+
+// Actualizar combinación base desde la pestaña Combinación
+function updateBaseCubes(newCubes: CubeFaces[]) {
+  baseCubes.value = JSON.parse(JSON.stringify(newCubes))
+  // Al cambiar la combinación del puzzle, la torre se reinicia con la nueva configuración
+  towerCubes.value = JSON.parse(JSON.stringify(newCubes))
+  // Marcamos que hay cambios pendientes que requieren pulsar JUGAR
+  hasPendingChanges.value = true
   if (currentSolutionIndex.value > solutions.value.length) {
     currentSolutionIndex.value = solutions.value.length > 0 ? 1 : 0
   }
-  saveCurrentGameState({
-    cubes: cubes.value,
-    activeSolutionIndex: currentSolutionIndex.value
-  })
+  persistState()
+}
+
+// Actualizar cubos de la torre (rotación o swap en el juego)
+function updateTowerCubes(newTowerCubes: CubeFaces[]) {
+  towerCubes.value = newTowerCubes
+  persistState()
 }
 
 // Iniciar juego desde la pestaña Combinación
 function handlePlay() {
   const count = solutions.value.length
-  // Guardar partida en el historial
+  // Guardar partida en el historial con la combinación base
   saveGameToHistory({
-    cubes: JSON.parse(JSON.stringify(cubes.value)),
+    cubes: JSON.parse(JSON.stringify(baseCubes.value)),
     hasSolution: count > 0,
     solutionCount: count
   })
   history.value = getHistory()
+  hasPendingChanges.value = false
+  persistState()
   activeTab.value = 'game'
 }
 
-// Aplicar solución matemática directamente a los cubos del juego
+// Aplicar solución matemática directamente a la torre del juego (sin alterar baseCubes ni GL)
 function applySolution(index: number) {
   if (solutions.value.length === 0) return
   const validIdx = Math.max(1, Math.min(index, solutions.value.length))
@@ -75,17 +105,18 @@ function applySolution(index: number) {
 
   const sol = solutions.value[validIdx - 1]
   if (sol && sol.cubeOrientations) {
-    cubes.value = JSON.parse(JSON.stringify(sol.cubeOrientations))
-    saveCurrentGameState({
-      cubes: cubes.value,
-      activeSolutionIndex: validIdx
-    })
+    towerCubes.value = JSON.parse(JSON.stringify(sol.cubeOrientations))
+    persistState()
   }
 }
 
 // Aplicar una partida del historial
 function handleApplyGame(selectedCubes: CubeFaces[]) {
-  updateCubes(selectedCubes)
+  baseCubes.value = JSON.parse(JSON.stringify(selectedCubes))
+  towerCubes.value = JSON.parse(JSON.stringify(selectedCubes))
+  currentSolutionIndex.value = 1
+  hasPendingChanges.value = false
+  persistState()
   activeTab.value = 'game'
 }
 
@@ -95,15 +126,42 @@ function handleClearHistory() {
   history.value = []
 }
 
+// Control seguro de navegación entre pestañas
+function handleTabChange(tab: ActiveTab) {
+  if (tab === 'game' && !canAccessGame.value) return
+  if (tab === 'explanation' && !canAccessExplanation.value) return
+  activeTab.value = tab
+}
+
+// Redireccionar si el estado invalida la pestaña activa actual
+watch(canAccessGame, (canAccess) => {
+  if (!canAccess && (activeTab.value === 'game' || activeTab.value === 'explanation')) {
+    activeTab.value = 'combination'
+  }
+})
+
+watch(canAccessExplanation, (canAccess) => {
+  if (!canAccess && activeTab.value === 'explanation') {
+    activeTab.value = 'game'
+  }
+})
+
 // Al montar, si no hay historial previo, registrar la configuración inicial
 onMounted(() => {
   if (history.value.length === 0) {
     saveGameToHistory({
-      cubes: JSON.parse(JSON.stringify(cubes.value)),
+      cubes: JSON.parse(JSON.stringify(baseCubes.value)),
       hasSolution: solutions.value.length > 0,
       solutionCount: solutions.value.length
     })
     history.value = getHistory()
+  }
+
+  // Comprobación de seguridad de la pestaña inicial
+  if (!canAccessGame.value && (activeTab.value === 'game' || activeTab.value === 'explanation')) {
+    activeTab.value = 'combination'
+  } else if (!canAccessExplanation.value && activeTab.value === 'explanation') {
+    activeTab.value = 'game'
   }
 })
 </script>
@@ -115,34 +173,38 @@ onMounted(() => {
       :is-solved="isSolved"
       :has-solution="hasSolution"
       :solution-count="solutionCount"
-      @update:active-tab="activeTab = $event"
+      :can-access-game="canAccessGame"
+      :can-access-explanation="canAccessExplanation"
+      @update:active-tab="handleTabChange"
     />
 
     <main class="main-content">
       <Transition name="tab-slide" mode="out-in">
-        <!-- Pestaña 1: Combinación -->
+        <!-- Pestaña 1: Combinación (usa baseCubes) -->
         <TabCombination
           v-if="activeTab === 'combination'"
-          :cubes="cubes"
-          @update:cubes="updateCubes"
+          :cubes="baseCubes"
+          :has-pending-changes="hasPendingChanges"
+          @update:cubes="updateBaseCubes"
           @play="handlePlay"
         />
 
-        <!-- Pestaña 2: Juego -->
+        <!-- Pestaña 2: Juego (usa towerCubes interactivos) -->
         <TabGame
           v-else-if="activeTab === 'game'"
-          :cubes="cubes"
+          :cubes="towerCubes"
           :solutions="solutions"
           :current-solution-index="currentSolutionIndex"
-          @update:cubes="updateCubes"
-          @go-to-explanation="activeTab = 'explanation'"
+          :is-solved="isSolved"
+          @update:cubes="updateTowerCubes"
+          @go-to-explanation="canAccessExplanation && (activeTab = 'explanation')"
           @apply-solution="applySolution"
         />
 
-        <!-- Pestaña 3: Explicación -->
+        <!-- Pestaña 3: Explicación (GL usa baseCubes inmutables; soluciones sincronizan towerCubes) -->
         <TabExplanation
           v-else-if="activeTab === 'explanation'"
-          :cubes="cubes"
+          :cubes="baseCubes"
           :solutions="solutions"
           :current-solution-index="currentSolutionIndex"
           @update:current-solution-index="currentSolutionIndex = $event"
@@ -178,6 +240,12 @@ onMounted(() => {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+@media (max-width: 520px) {
+  .main-content {
+    padding: 10px 8px;
+  }
 }
 
 .app-footer {

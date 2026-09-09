@@ -188,5 +188,41 @@ function getCurrentColor(): ColorDef {
   opacity: 0;
   transform: translateY(-4px) scale(0.97);
 }
+
+@media (max-width: 520px) {
+  .custom-color-select {
+    width: 94px;
+  }
+
+  .select-trigger {
+    padding: 5px 6px;
+    gap: 4px;
+    border-radius: 7px;
+  }
+
+  .color-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .color-text {
+    font-size: 0.78rem;
+  }
+
+  .chevron-icon {
+    width: 13px;
+    height: 13px;
+  }
+
+  .dropdown-menu {
+    width: 105px;
+    padding: 3px;
+  }
+
+  .dropdown-item {
+    padding: 5px 6px;
+    gap: 5px;
+  }
+}
 </style>
 

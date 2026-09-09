@@ -52,17 +52,17 @@ const renderEdges = computed<RenderEdge[]>(() => {
   const result: RenderEdge[] = []
 
   for (const [pairKey, edgeList] of Object.entries(groups)) {
+    // Ordenar de forma determinista para que la curvatura de cada cubo sea fija y reproducible
+    edgeList.sort((a, b) => a.cubeId - b.cubeId || a.pairIndex - b.pairIndex)
     const total = edgeList.length
     const [c1, c2] = pairKey.split('-') as [ColorCode, ColorCode]
 
     edgeList.forEach((edge, idx) => {
-      const p1 = NODE_POSITIONS[edge.u]
-      const p2 = NODE_POSITIONS[edge.v]
-
       let pathD = ''
-      let labelPos = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 }
+      let labelPos = { x: 0, y: 0 }
 
       if (c1 === c2) {
+        const p1 = NODE_POSITIONS[c1]
         // Bucle (Loop) sobre el mismo nodo
         // Determinar dirección del bucle hacia afuera del centro del canvas
         const dirX = p1.x < 140 ? -1 : 1
@@ -78,6 +78,10 @@ const renderEdges = computed<RenderEdge[]>(() => {
         labelPos = { x: p1.x + dirX * (loopDist * 0.75), y: p1.y + dirY * (loopDist * 0.75) }
       } else {
         // Arista entre dos nodos distintos
+        // Arista entre dos nodos distintos: usar orden canónico (c1 -> c2) para vector normal invariable
+        const p1 = NODE_POSITIONS[c1]
+        const p2 = NODE_POSITIONS[c2]
+
         const dx = p2.x - p1.x
         const dy = p2.y - p1.y
         const dist = Math.hypot(dx, dy)

@@ -6,7 +6,8 @@ import {
   ChevronRight,
   Sparkles,
   Network,
-  AlertTriangle
+  AlertTriangle,
+  Lock
 } from 'lucide-vue-next'
 import { CubeFaces, RotationDirection } from '../../types/cube'
 import { GameSolution } from '../../types/graph'
@@ -78,6 +79,12 @@ function handleNextSolution() {
   if (props.solutions.length === 0) return
   const nextIdx = props.currentSolutionIndex < props.solutions.length ? props.currentSolutionIndex + 1 : 1
   emit('applySolution', nextIdx)
+}
+
+function handleExplainClick() {
+  if (isSolved.value) {
+    emit('goToExplanation')
+  }
 }
 
 // Modal de Resolver
@@ -203,9 +210,13 @@ function triggerConfetti() {
 
         <button
           class="glass-btn btn-accent-blue explain-btn"
-          @click="emit('goToExplanation')"
+          :disabled="!isSolved"
+          :class="{ disabled: !isSolved }"
+          :title="!isSolved ? 'Debes resolver la torre primero para ver la explicación matemática' : 'Ver explicación matemática y grafos'"
+          @click="handleExplainClick"
         >
-          <Network :size="18" />
+          <Lock v-if="!isSolved" :size="16" class="explain-lock-icon" />
+          <Network v-else :size="18" />
           <span>EXPLICACIÓN</span>
         </button>
       </div>
@@ -328,6 +339,19 @@ function triggerConfetti() {
   font-weight: 800;
   letter-spacing: 0.8px;
   gap: 8px;
+}
+
+.explain-btn:disabled,
+.explain-btn.disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+  box-shadow: none;
+}
+
+.explain-lock-icon {
+  color: #fca5a5;
+  flex-shrink: 0;
 }
 
 .tower-lateral-section {

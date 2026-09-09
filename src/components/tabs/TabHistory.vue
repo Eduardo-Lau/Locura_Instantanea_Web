@@ -462,9 +462,11 @@ function getColorName(code: string): string {
 @media (max-width: 860px) {
   .cubes-config-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
   .unfolded-cubes-row {
     grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
   }
   .history-top-bar {
     justify-content: center;
@@ -474,9 +476,40 @@ function getColorName(code: string): string {
 @media (max-width: 520px) {
   .cubes-config-grid {
     grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .cube-config-column {
+    padding: 10px 8px;
+    gap: 8px;
+  }
+  .cube-col-title {
+    font-size: 1rem;
+  }
+  .faces-selectors-list {
+    gap: 6px;
+  }
+  .face-select-row {
+    gap: 4px;
+  }
+  .face-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .face-value-badge {
+    padding: 4px 6px;
+    font-size: 0.78rem;
+    min-width: 68px;
+    border-radius: 5px;
   }
   .unfolded-cubes-row {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .apply-btn {
+    width: 100%;
+    padding: 12px 18px;
+    font-size: 0.95rem;
   }
 }
 </style>

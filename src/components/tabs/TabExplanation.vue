@@ -39,6 +39,7 @@ const activeSolution = computed<GameSolution | null>(() => {
 const generalEdges = computed(() => getGeneralGraphEdges(props.cubes))
 
 // Al cambiar de solución, se aplica sincronizadamente al juego y la torre de forma inmediata
+// Al cambiar de solución, se sincroniza automáticamente con la torre del juego
 function handlePrev() {
   if (props.solutions.length === 0) return
   const nextIdx = props.currentSolutionIndex > 1 ? props.currentSolutionIndex - 1 : props.solutions.length
@@ -51,12 +52,6 @@ function handleNext() {
   const nextIdx = props.currentSolutionIndex < props.solutions.length ? props.currentSolutionIndex + 1 : 1
   emit('update:currentSolutionIndex', nextIdx)
   emit('applySolution', nextIdx)
-}
-
-function handleApplyCurrent() {
-  if (activeSolution.value) {
-    emit('applySolution', props.currentSolutionIndex || 1)
-  }
 }
 </script>
 
@@ -125,10 +120,11 @@ function handleApplyCurrent() {
           </span>
         </div>
 
-        <button class="glass-btn btn-primary apply-sol-btn" @click="handleApplyCurrent">
-          <Sparkles :size="16" />
-          <span>APLICADA A LA TORRE</span>
-        </button>
+        <!-- Indicador informativo de sincronización con el juego -->
+        <div class="applied-tower-indicator" title="Esta solución matemática está reflejada en la torre del juego">
+          <Sparkles :size="15" class="indicator-icon" />
+          <span>APLICADA A LA TORRE DEL JUEGO</span>
+        </div>
       </div>
 
       <div v-else class="no-solution-alert">
@@ -326,12 +322,25 @@ function handleApplyCurrent() {
   justify-content: center;
 }
 
-.apply-sol-btn {
+.applied-tower-indicator {
   margin-top: 4px;
-  padding: 10px 24px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  color: #c7d2fe;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+  user-select: none;
+}
+
+.indicator-icon {
+  color: #818cf8;
 }
 
 .no-solution-alert {

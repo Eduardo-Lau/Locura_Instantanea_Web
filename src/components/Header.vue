@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import { SlidersHorizontal, Gamepad2, Network, History } from 'lucide-vue-next'
+import { SlidersHorizontal, Gamepad2, Network, History, Lock } from 'lucide-vue-next'
 
 export type ActiveTab = 'combination' | 'game' | 'explanation' | 'history'
 
-defineProps<{
-  activeTab: ActiveTab
-  isSolved: boolean
-  hasSolution: boolean
-  solutionCount: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    activeTab: ActiveTab
+    isSolved: boolean
+    hasSolution: boolean
+    solutionCount: number
+    canAccessGame?: boolean
+    canAccessExplanation?: boolean
+  }>(),
+  {
+    canAccessGame: true,
+    canAccessExplanation: true
+  }
+)
 
 const emit = defineEmits<{
   (e: 'update:activeTab', tab: ActiveTab): void
@@ -20,6 +28,32 @@ const tabs = [
   { id: 'explanation' as ActiveTab, label: 'Explicación', icon: Network },
   { id: 'history' as ActiveTab, label: 'Historial', icon: History }
 ]
+
+function isTabDisabled(tabId: ActiveTab): boolean {
+  if (tabId === 'game') return !props.canAccessGame
+  if (tabId === 'explanation') return !props.canAccessExplanation
+  return false
+}
+
+function getTabTooltip(tabId: ActiveTab): string {
+  if (tabId === 'game' && !props.canAccessGame) {
+    return 'Debes pulsar "JUGAR" en la pestaña Combinación para iniciar la partida'
+  }
+  if (tabId === 'explanation') {
+    if (!props.canAccessGame) {
+      return 'Debes pulsar "JUGAR" en la pestaña Combinación'
+    }
+    if (!props.canAccessExplanation) {
+      return 'Debes resolver la torre primero para ver la explicación matemática'
+    }
+  }
+  return ''
+}
+
+function handleTabClick(tabId: ActiveTab) {
+  if (isTabDisabled(tabId)) return
+  emit('update:activeTab', tabId)
+}
 </script>
 
 <template>
@@ -56,13 +90,19 @@ const tabs = [
           v-for="tab in tabs"
           :key="tab.id"
           class="tab-btn"
-          :class="{ active: activeTab === tab.id }"
-          @click="emit('update:activeTab', tab.id)"
+          :class="{
+            active: activeTab === tab.id,
+            disabled: isTabDisabled(tab.id)
+          }"
+          :disabled="isTabDisabled(tab.id)"
+          :title="getTabTooltip(tab.id)"
+          @click="handleTabClick(tab.id)"
         >
           <component :is="tab.icon" class="tab-icon" :size="18" />
           <span class="tab-label">{{ tab.label }}</span>
+          <Lock v-if="isTabDisabled(tab.id)" :size="12" class="tab-lock-icon" />
           <span
-            v-if="tab.id === 'game' && isSolved"
+            v-else-if="tab.id === 'game' && isSolved"
             class="solved-dot"
             title="¡Torre Resuelta!"
           ></span>
@@ -204,6 +244,28 @@ const tabs = [
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.4));
   border: 1px solid rgba(165, 180, 252, 0.4);
   box-shadow: 0 0 16px rgba(99, 102, 241, 0.35);
+}
+
+.tab-btn.disabled,
+.tab-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.tab-btn.disabled:hover,
+.tab-btn:disabled:hover {
+  color: #94a3b8;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.tab-lock-icon {
+  margin-left: 2px;
+  color: #f87171;
+  opacity: 0.9;
+  flex-shrink: 0;
 }
 
 .tab-icon {

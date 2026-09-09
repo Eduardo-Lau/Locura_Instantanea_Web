@@ -51,33 +51,70 @@ export function clearHistory(): void {
 }
 
 export interface CurrentState {
-  cubes: CubeFaces[]
+  baseCubes?: CubeFaces[]
+  towerCubes?: CubeFaces[]
+  cubes?: CubeFaces[] // compatibilidad hacia atrás
   activeSolutionIndex: number
+  hasPendingChanges?: boolean
 }
 
-export function saveCurrentGameState(state: CurrentState): void {
+export function saveCurrentGameState(state: {
+  baseCubes: CubeFaces[]
+  towerCubes: CubeFaces[]
+  activeSolutionIndex: number
+  hasPendingChanges?: boolean
+}): void {
   try {
-    localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify(state))
+    const payload = {
+      baseCubes: state.baseCubes,
+      towerCubes: state.towerCubes,
+      cubes: state.towerCubes,
+      activeSolutionIndex: state.activeSolutionIndex,
+      hasPendingChanges: Boolean(state.hasPendingChanges)
+    }
+    localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify(payload))
   } catch (err) {
     console.error('Error al guardar estado activo:', err)
   }
 }
 
-export function loadCurrentGameState(): CurrentState {
+export function loadCurrentGameState(): {
+  baseCubes: CubeFaces[]
+  towerCubes: CubeFaces[]
+  activeSolutionIndex: number
+  hasPendingChanges: boolean
+} {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_STATE)
     if (raw) {
       const parsed = JSON.parse(raw)
-      if (parsed.cubes && Array.isArray(parsed.cubes) && parsed.cubes.length === 4) {
-        return parsed
+      const isValid = (c: any) => Array.isArray(c) && c.length === 4
+      const base = isValid(parsed.baseCubes)
+        ? parsed.baseCubes
+        : isValid(parsed.cubes)
+          ? parsed.cubes
+          : null
+      const tower = isValid(parsed.towerCubes)
+        ? parsed.towerCubes
+        : (base ? JSON.parse(JSON.stringify(base)) : null)
+
+      if (base && tower) {
+        return {
+          baseCubes: base,
+          towerCubes: tower,
+          activeSolutionIndex: typeof parsed.activeSolutionIndex === 'number' ? parsed.activeSolutionIndex : 1,
+          hasPendingChanges: Boolean(parsed.hasPendingChanges)
+        }
       }
     }
   } catch (err) {
     console.error('Error al leer estado guardado:', err)
   }
   return {
-    cubes: JSON.parse(JSON.stringify(DEFAULT_CUBES)),
-    activeSolutionIndex: 0
+    baseCubes: JSON.parse(JSON.stringify(DEFAULT_CUBES)),
+    towerCubes: JSON.parse(JSON.stringify(DEFAULT_CUBES)),
+    activeSolutionIndex: 1,
+    hasPendingChanges: false
   }
 }
 
