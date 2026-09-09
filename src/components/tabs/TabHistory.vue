@@ -143,7 +143,6 @@ function getColorName(code: string): string {
           <span>SÍ tiene solución ({{ activeGame.solutionCount }})</span>
         </span>
         <span v-else class="status-no">
-          <span class="status-icon">✖</span> NO tiene solución
           <XCircle :size="18" class="status-icon" />
           <span>NO tiene solución</span>
         </span>

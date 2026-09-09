@@ -296,8 +296,35 @@ function handleDropdownToggle(id: string, isOpen: boolean) {
 }
 
 @media (max-width: 520px) {
+  .actions-bar {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .actions-bar .glass-btn {
+    padding: 8px 8px;
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .actions-bar .btn-accent-red {
+    flex-shrink: 0;
+    padding: 8px 12px;
+  }
+  .actions-bar .btn-accent-blue {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+  }
+  .actions-bar .glass-btn svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
   .cubes-config-grid {
-    grid-template-columns: 1fr;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
@@ -320,7 +347,6 @@ function handleDropdownToggle(id: string, isOpen: boolean) {
   }
   .unfolded-cubes-row {
     grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
     gap: 10px;
   }
   .play-btn {
