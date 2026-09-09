@@ -26,6 +26,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:cubes', newCubes: CubeFaces[]): void
   (e: 'goToExplanation'): void
+  (e: 'goToCombination'): void
   (e: 'applySolution', index: number): void
 }>()
 
@@ -91,6 +92,7 @@ function handleExplainClick() {
 const isModalOpen = ref(false)
 const modalTitle = ref('')
 const modalMessage = ref('')
+const modalConfirmText = ref('Sí, Por Favor')
 const isConfirmOtherSolutions = ref(false)
 
 function handleSolveClick() {
@@ -100,6 +102,7 @@ function handleSolveClick() {
   if (props.solutions.length === 0) {
     modalTitle.value = 'Sin Solución'
     modalMessage.value = 'Esta combinación de cubos no tiene ninguna solución matemática posible según la Teoría de Grafos.'
+    modalConfirmText.value = 'Intentar otra combinación'
     isConfirmOtherSolutions.value = false
     isModalOpen.value = true
     return
@@ -108,11 +111,13 @@ function handleSolveClick() {
   if (isSolved.value) {
     modalTitle.value = 'Confirmación'
     modalMessage.value = 'El juego ya está resuelto.\n¿Deseas que el programa encuentre y aplique otra solución posible?'
+    modalConfirmText.value = 'Sí, Por Favor'
     isConfirmOtherSolutions.value = true
     isModalOpen.value = true
   } else {
     modalTitle.value = 'Resolver Juego'
     modalMessage.value = `Se han encontrado ${props.solutions.length} soluciones válidas.\n¿Deseas que el programa aplique la solución óptima automáticamente?`
+    modalConfirmText.value = 'Sí, Por Favor'
     isConfirmOtherSolutions.value = false
     isModalOpen.value = true
   }
@@ -120,14 +125,16 @@ function handleSolveClick() {
 
 function handleConfirmModal() {
   isModalOpen.value = false
-  if (props.solutions.length > 0) {
-    if (isConfirmOtherSolutions.value) {
-      handleNextSolution()
-    } else {
-      emit('applySolution', 1)
-    }
-    triggerConfetti()
+  if (props.solutions.length === 0) {
+    emit('goToCombination')
+    return
   }
+  if (isConfirmOtherSolutions.value) {
+    handleNextSolution()
+  } else {
+    emit('applySolution', 1)
+  }
+  triggerConfetti()
 }
 
 function triggerConfetti() {
@@ -237,7 +244,7 @@ function triggerConfetti() {
       :is-open="isModalOpen"
       :title="modalTitle"
       :message="modalMessage"
-      confirm-text="Sí, Por Favor"
+      :confirm-text="modalConfirmText"
       cancel-text="No, gracias"
       :is-alert="solutions.length === 0"
       @confirm="handleConfirmModal"

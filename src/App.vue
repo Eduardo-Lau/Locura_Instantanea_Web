@@ -198,6 +198,7 @@ onMounted(() => {
           :is-solved="isSolved"
           @update:cubes="updateTowerCubes"
           @go-to-explanation="canAccessExplanation && (activeTab = 'explanation')"
+          @go-to-combination="activeTab = 'combination'"
           @apply-solution="applySolution"
         />
 
