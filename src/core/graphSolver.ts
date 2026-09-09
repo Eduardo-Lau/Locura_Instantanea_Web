@@ -80,8 +80,11 @@ function getDirectedOrientations(pairs: [ColorCode, ColorCode][]): { from: Color
 }
 
 /**
- * Resuelve el juego de Locura Instantánea encontrando todas las soluciones formales por Teoría de Grafos.
- * Cada par ordenado de subgrafos (H1, H2) 2-regulares y disjuntos en aristas constituye una solución formal:
+ * Resuelve el juego de Locura Instantánea encontrando las soluciones formales por Teoría de Grafos
+ * mediante un enfoque híbrido:
+ * - Trata a {H1, H2} como un conjunto no ordenado para eliminar la redundancia de rotación global de 90°
+ *   (intercambiar H1 y H2 en bloque equivale a cambiar el ángulo del observador sin alterar la torre).
+ * - Mantiene las distintas orientaciones físicas locales de cada cubo (distintos pares físicos asignados).
  * - H1 determina el eje Izquierda (C6) y Derecha (C5)
  * - H2 determina el eje Superior (C3) e Inferior (C4)
  * - El par libre de cada cubo se asigna a C1 y C2 (bases no visibles de la columna)
@@ -124,6 +127,19 @@ export function solveInstantInsanity(cubes: CubeFaces[]): GameSolution[] {
                   if (j3 === i3) continue
 
                   const h2Indices = [j0, j1, j2, j3]
+
+                  // Enfoque híbrido: tratamos a {H1, H2} como un conjunto no ordenado para descartar
+                  // la rotación global de 90° de toda la torre (intercambio trivial H1 <-> H2).
+                  // Exigimos que h1Indices sea lexicográficamente menor que h2Indices.
+                  let isCanonicalOrder = false
+                  for (let k = 0; k < 4; k++) {
+                    if (h1Indices[k] !== h2Indices[k]) {
+                      isCanonicalOrder = h1Indices[k] < h2Indices[k]
+                      break
+                    }
+                  }
+                  if (!isCanonicalOrder) continue
+
                   const h2Pairs: [ColorCode, ColorCode][] = [
                     cubePairs[0][j0],
                     cubePairs[1][j1],
