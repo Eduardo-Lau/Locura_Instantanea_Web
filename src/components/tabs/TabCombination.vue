@@ -320,7 +320,9 @@ function handleDropdownToggle(id: string, isOpen: boolean) {
     padding: 8px 10px;
   }
   .actions-bar .btn-accent-blue {
-    flex: 0 0 auto;
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
     padding: 8px 7px;
   }
   .actions-bar .glass-btn svg {
