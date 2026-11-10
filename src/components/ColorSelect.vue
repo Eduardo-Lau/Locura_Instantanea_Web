@@ -121,20 +121,25 @@ function getCurrentColor(): ColorDef {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 10px;
-  border-radius: 9px;
-  background: rgba(22, 26, 38, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 7px 11px;
+  border-radius: 12px;
+  background: var(--surface-glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid transparent;
+  background-image: linear-gradient(var(--surface-glass), var(--surface-glass)), var(--specular-border);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--glass-shadow-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   justify-content: space-between;
 }
 
 .select-trigger:hover,
 .select-trigger.is-open {
-  border-color: rgba(99, 102, 241, 0.5);
-  background: rgba(28, 33, 48, 0.85);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+  background-image: linear-gradient(var(--surface-glass-hover), var(--surface-glass-hover)), var(--specular-border);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.5), 0 0 12px rgba(99, 102, 241, 0.28), inset 0 1px 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .color-dot {
@@ -166,18 +171,21 @@ function getCurrentColor(): ColorDef {
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 5px);
+  top: calc(100% + 6px);
   left: 0;
   width: 100%;
-  background: rgba(18, 22, 33, 0.95);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  background: var(--surface-glass-elevated);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid transparent;
+  background-image: linear-gradient(var(--surface-glass-elevated), var(--surface-glass-elevated)), var(--specular-border);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  border-radius: 14px;
+  box-shadow: var(--glass-shadow);
   z-index: 100;
   overflow: hidden;
-  padding: 4px;
+  padding: 5px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -194,7 +202,8 @@ function getCurrentColor(): ColorDef {
   align-items: center;
   gap: 8px;
   padding: 8px 10px;
-  border-radius: 6px;
+  border-radius: 9px;
+  border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -207,7 +216,8 @@ function getCurrentColor(): ColorDef {
 
 .dropdown-item.selected {
   background: rgba(99, 102, 241, 0.25);
-  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-color: rgba(165, 180, 252, 0.4);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 /* Animación del dropdown hacia abajo */

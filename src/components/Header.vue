@@ -209,12 +209,15 @@ function handleTabClick(tabId: ActiveTab) {
   align-items: center;
   padding: 6px;
   gap: 8px;
-  border-radius: 14px;
-  background: rgba(18, 22, 34, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid transparent;
+  background-image: linear-gradient(var(--surface-glass), var(--surface-glass)), var(--specular-border);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--glass-shadow-sm);
   max-width: 100%;
   overflow-x: auto;
 }
@@ -225,12 +228,13 @@ function handleTabClick(tabId: ActiveTab) {
   align-items: center;
   gap: 8px;
   padding: 8px 18px;
-  border-radius: 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
   font-size: 0.95rem;
   font-weight: 600;
   color: #94a3b8;
   background: transparent;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--transition-fast);
   white-space: nowrap;
 }
 
@@ -241,9 +245,9 @@ function handleTabClick(tabId: ActiveTab) {
 
 .tab-btn.active {
   color: #ffffff;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.4));
-  border: 1px solid rgba(165, 180, 252, 0.4);
-  box-shadow: 0 0 16px rgba(99, 102, 241, 0.35);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.45), rgba(139, 92, 246, 0.45));
+  border: 1px solid rgba(165, 180, 252, 0.45);
+  box-shadow: 0 6px 18px -4px rgba(99, 102, 241, 0.45), inset 0 1px 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .tab-btn.disabled,

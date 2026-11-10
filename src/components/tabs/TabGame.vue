@@ -288,22 +288,24 @@ function triggerConfetti() {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 6px 16px;
-  border-radius: 12px;
+  padding: 6px 18px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--glass-shadow-sm);
 }
 
 .nav-arrow-btn {
   width: 34px;
   height: 34px;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(155, 22, 57, 0.4);
-  border: 1px solid rgba(155, 22, 57, 0.6);
+  background: rgba(155, 22, 57, 0.45);
+  border: 1px solid rgba(244, 63, 94, 0.45);
   color: #ffffff;
   cursor: pointer;
-  transition: all 0.15s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
+  transition: all var(--transition-fast);
 }
 
 .nav-arrow-btn:hover {
@@ -323,11 +325,12 @@ function triggerConfetti() {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 18px;
+  padding: 8px 20px;
+  border-radius: var(--radius-pill);
   font-weight: 600;
   color: #f87171;
-  border-color: rgba(248, 113, 113, 0.35);
-  background: rgba(239, 68, 68, 0.1);
+  background-image: linear-gradient(rgba(239, 68, 68, 0.14), rgba(239, 68, 68, 0.14)), var(--specular-border);
+  box-shadow: var(--glass-shadow-sm);
 }
 
 .alert-icon {
