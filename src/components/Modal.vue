@@ -50,9 +50,9 @@ const emit = defineEmits<{
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(6, 8, 12, 0.82);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,10 +67,15 @@ const emit = defineEmits<{
   display: flex;
   flex-direction: column;
   gap: 18px;
-  border-radius: 18px;
-  background: rgba(22, 26, 38, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-container);
+  background: var(--surface-glass-elevated);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid transparent;
+  background-image: linear-gradient(var(--surface-glass-elevated), var(--surface-glass-elevated)), var(--specular-border);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--glass-shadow);
 }
 
 .modal-title {
@@ -95,11 +100,11 @@ const emit = defineEmits<{
 }
 
 .btn-cancel {
-  background: rgba(255, 255, 255, 0.05);
+  background-image: linear-gradient(var(--control-well), var(--control-well)), var(--specular-border);
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background-image: linear-gradient(var(--surface-glass-hover), var(--surface-glass-hover)), var(--specular-border);
 }
 
 /* Transición */

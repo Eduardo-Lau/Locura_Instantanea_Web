@@ -177,11 +177,11 @@ function triggerPhysicalSwap(indexA: number, indexB: number) {
   background: rgba(16, 185, 129, 0.2);
   border: 1px solid rgba(16, 185, 129, 0.5);
   color: #34d399;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   font-weight: 800;
   font-size: 0.9rem;
   letter-spacing: 0.8px;
-  box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.35), inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .tower-grid-wrapper {
@@ -228,15 +228,18 @@ function triggerPhysicalSwap(indexA: number, indexB: number) {
 .swap-btn {
   width: 28px;
   height: 28px;
-  border-radius: 7px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(99, 102, 241, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
   color: #c7d2fe;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
 }
 
 .swap-btn:hover {
@@ -261,12 +264,13 @@ function triggerPhysicalSwap(indexA: number, indexB: number) {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(14, 18, 28, 0.6);
-  backdrop-filter: blur(12px);
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  background: var(--control-well);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  padding: 7px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--control-well-border);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 .tower-face-tile {

@@ -190,7 +190,7 @@ function handleDropdownToggle(id: string, isOpen: boolean) {
 }
 
 .cube-config-column {
-  padding: 16px 14px;
+  padding: 18px 14px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -248,14 +248,16 @@ function handleDropdownToggle(id: string, isOpen: boolean) {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  border-radius: 20px;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background: rgba(245, 158, 11, 0.16);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(245, 158, 11, 0.42);
   color: #fbbf24;
   font-size: 0.88rem;
   font-weight: 600;
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.2), inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
   text-align: center;
 }
 

@@ -130,10 +130,11 @@ function getTextColor(code: ColorCode): string {
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 3px;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--control-well);
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--control-well-border);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.38), 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .grid-cell {
